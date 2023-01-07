@@ -7,6 +7,8 @@ const refs = {
   };
   
 const formData = {};
+let savedMessage;
+let parsedMessage;
 
 refs.form.addEventListener('submit', onFormSubmit);
 refs.form.addEventListener('input', throttle(onDataInput, 500));
@@ -14,10 +16,15 @@ refs.form.addEventListener('input', throttle(onDataInput, 500));
 populateTextarea();
 
 function onFormSubmit(evt) {
-    console.log(formData);
+    savedMessage = localStorage.getItem("feedback-form-state");
+    parsedMessage = JSON.parse(savedMessage);
+    console.log(parsedMessage);
     evt.preventDefault();
     evt.currentTarget.reset();
     localStorage.removeItem("feedback-form-state");
+    for (let q in formData) {
+        delete formData[q] 
+        };
 }
 
 function onDataInput(e) {
@@ -26,11 +33,14 @@ function onDataInput(e) {
 };
 
 function populateTextarea () {
-    const savedMessage = localStorage.getItem("feedback-form-state");
-    const ggg = JSON.parse(savedMessage);
+    savedMessage = localStorage.getItem("feedback-form-state");
+    parsedMessage = JSON.parse(savedMessage);
 
-    if (savedMessage) {
-        refs.input.value = ggg.email;
-        refs.textarea.value = ggg.message;
+    if (savedMessage && savedMessage.includes("email")) {
+        refs.input.value = parsedMessage.email;
       }
+    
+    if (savedMessage && savedMessage.includes("message")) {
+        refs.textarea.value = parsedMessage.message;
+    }
 }
